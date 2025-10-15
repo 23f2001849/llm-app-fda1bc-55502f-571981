@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Total Calculator</title>
+    <style>
+        /* All CSS styles here */
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="total-sales">Total Sales: $0</h1>
+    <footer>
+        <p>Powered by Vanilla JavaScript</p>
+    </footer>
+    
+    <script>
+        // Function to fetch and calculate total sales from CSV
+        async function fetchAndCalculateSales() {
+            try {
+                const response = await fetch('sales.csv');
+                if (!response.ok) throw new Error('Failed to load CSV file.');
+
+                const text = await response.text();
+                const lines = text.trim().split('\n');
+                let totalSales = 0;
+
+                // Skip the header and iterate through the remaining lines
+                for (let i = 1; i < lines.length; i++) {
+                    const parts = lines[i].split(',');
+                    if (parts.length === 2) {
+                        const salesAmount = parseFloat(parts[1]);
+                        if (!isNaN(salesAmount)) {
+                            totalSales += salesAmount;
+                        } else {
+                            console.error(`Invalid sales amount for ${parts[0]}: ${parts[1]}`);
+                        }
+                    }
+                }
+
+                // Display the total sales on the page
+                document.getElementById('total-sales').innerText = `Total Sales: $${totalSales.toFixed(2)}`;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('total-sales').innerText = 'Error loading sales data.';
+            }
+        }
+
+        // Call the function to fetch and calculate sales
+        fetchAndCalculateSales();
+    </script>
+</body>
+</html>
